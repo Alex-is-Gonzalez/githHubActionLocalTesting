@@ -73,13 +73,13 @@ Once the action is ran you will see the logs in which you can use to debug and t
 This repository only contains one workflow, but what if you didn't want to run all workflows?
 Run a Workflow: Navigate to the root of your repository and run ACT:
 
-- To run the default event in your workflow:
+### To run the default event in your workflow:
 
 ```bash
  $ act
 ```
 
-- To specify an event type:
+### To specify an event type:
 
 ```bash
 $ act <event_name>
@@ -89,7 +89,41 @@ For example, to test a push event:
 $ act push
 ```
 
-- Use Docker Images: ACT uses Docker to simulate GitHub Actions environments. You can specify the runner image:
+### To specify a workflow:
+
+```
+act -W .github/workflows/<workflow-file-name-here>
+```
+
+Try adding another action like the one below to practice calling a specific workflow
+
+```yml
+# This workflow will triage pull requests and apply a label based on the
+# paths that are modified in the pull request.
+#
+# To use this workflow, you will need to set up a .github/labeler.yml
+# file with configuration.  For more information, see:
+# https://github.com/actions/labeler
+
+name: Labeler
+on: [pull_request_target]
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - uses: actions/labeler@v4
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+```
+
+### Use Docker Images:
+
+ACT uses Docker to simulate GitHub Actions environments. You can specify the runner image:
 
 ubuntu-latest equivalent:
 
@@ -97,7 +131,9 @@ ubuntu-latest equivalent:
 $ act -P ubuntu-latest=ghcr.io/catthehacker/ubuntu:full-latest
 ```
 
-- Secrets and Variables: Provide secrets and environment variables locally by using a .secrets file or passing them in the command:
+### Secrets and Variables:
+
+Provide secrets and environment variables locally by using a .secrets file or passing them in the command:
 
 ```
 $ act -s MY_SECRET=secret_value
@@ -109,10 +145,10 @@ Suppose you have a workflow that runs tests on push. To test it locally:
 
 1. Ensure your Docker is running.
 
-2. Run ACT for the push event:
+2. Run act for the push event:
 
 ```bash
 $ act push
 ```
 
-ACT will simulate the workflow, display logs, and show if any steps fail, allowing you to debug locally.
+act CLI will simulate the workflow, display logs, and show if any steps fail, allowing you to debug locally.
